@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: evok-audio-dashboard
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python src/main.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: evok-audio-db
+          property: connectionString
+  - type: pserv
+    name: evok-audio-db
+    env: docker
+    image: mysql:8.0
+    disk:
+      name: mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 10
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
+      - key: MYSQL_DATABASE
+        value: evok_audio_db
+      - key: MYSQL_USER
+        value: evok_user
+      - key: MYSQL_PASSWORD
+        generateValue: true
+
